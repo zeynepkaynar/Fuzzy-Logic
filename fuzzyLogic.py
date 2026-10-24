@@ -141,3 +141,34 @@ def mamdani(inputs, rules, output_sets, x_universe):
         return 0  # no rule fired
     return np.sum(x_universe * aggregated) / np.sum(aggregated)
 
+# Hierarchical evaluation: house -> applicant -> loan amount
+def evaluate_loan(market, location, asset, income, interest):
+    # Fuzzify crisp inputs
+    market_f   = fuzzification(market, market_value)
+    location_f = fuzzification(location, house_location)
+    asset_f    = fuzzification(asset, applicant_asset)
+    income_f   = fuzzification(income, applicant_salary)
+    interest_f = fuzzification(interest, interest_rate)
+
+    # Stage 1: house evaluation (0-10)
+    house_inputs = {"Market": market_f, "Location": location_f}
+    house_score = mamdani(house_inputs, house_rules, house_evaluation, x_house_eval)
+
+    # Stage 2: applicant evaluation (0-10)
+    applicant_inputs = {"Asset": asset_f, "Income": income_f}
+    applicant_score = mamdani(applicant_inputs, applicant_rules, applicant_evaluation, x_applicant_eval)
+
+    # Stage 3: loan amount
+    # Re-fuzzify stage 1 and 2 outputs using their output sets
+    credit_inputs = {
+        "Income":    income_f,
+        "Interest":  interest_f,
+        "House":     fuzzification(house_score, house_evaluation),
+        "Applicant": fuzzification(applicant_score, applicant_evaluation),
+    }
+    credit_amount = mamdani(credit_inputs, credit_rules, credit, x_credit)
+
+    return house_score, applicant_score, credit_amount
+
+house, applicant, loan = evaluate_loan(market=300, location=7, asset=400, income=50, interest=5)
+print(f"House: {house:.2f}, Applicant: {applicant:.2f}, Loan: {loan:.1f}k $")

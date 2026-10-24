@@ -93,7 +93,7 @@ applicant_rules = [
 credit_rules = [
     ({"Income": "Low", "Interest": "Medium"}, "Very Low"),          # 1
     ({"Income": "Low", "Interest": "High"}, "Very Low"),            # 2
-    ({"Income": "Medium", "Interest": "High"}, "Low"),              # 3 (PDF'te "2" yazıyor)
+    ({"Income": "Medium", "Interest": "High"}, "Low"),              # 3 
     ({"Applicant": "Low"}, "Very Low"),                             # 4
     ({"House": "Very Low"}, "Very Low"),                            # 5
     ({"Applicant": "Medium", "House": "Very Low"}, "Low"),          # 6
@@ -107,3 +107,37 @@ credit_rules = [
     ({"Applicant": "High", "House": "High"}, "High"),               # 14
     ({"Applicant": "High", "House": "Very High"}, "Very High"),     # 15
 ]
+
+# Evaluate a fuzzy set over the whole universe (returns an array)
+def membership_over_universe(x_universe, parameters):
+    if len(parameters) == 3:
+        return np.array([trimf(x, *parameters) for x in x_universe])
+    else:
+        return np.array([trapmf(x, *parameters) for x in x_universe])
+        
+
+def mamdani(inputs, rules, output_sets, x_universe):
+    aggregated = np.zeros(len(x_universe))
+
+    for conditions, output_name in rules:
+        # Step 1: rule strength = min of all condition memberships (AND)
+        strength = 1
+        for variable, fuzzy_set in conditions.items():
+            strength = min(strength, inputs[variable][fuzzy_set])
+
+        # Skip rules that do not fire
+        if strength == 0:
+            continue
+
+        # Step 2: clip the output set at the rule strength
+        output_mf = membership_over_universe(x_universe, output_sets[output_name])
+        clipped = np.minimum(strength, output_mf)
+
+        # Step 3: aggregate with max
+        aggregated = np.maximum(aggregated, clipped)
+
+    # Step 4: centroid defuzzification
+    if np.sum(aggregated) == 0:
+        return 0  # no rule fired
+    return np.sum(x_universe * aggregated) / np.sum(aggregated)
+

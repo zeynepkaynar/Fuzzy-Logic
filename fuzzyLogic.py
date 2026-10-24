@@ -51,3 +51,59 @@ def fuzzification(input_val, var):
                 value = trapmf(input_val, *parameters)
             sonuc[name] = value
         return sonuc
+
+
+# Rule format: ({variable: fuzzy_set, ...}, output_set)
+
+# 1. House Evaluation (14 rules)
+house_rules = [
+    ({"Market": "Low"}, "Low"),                                     # 1
+    ({"Location": "Bad"}, "Low"),                                   # 2
+    ({"Location": "Bad", "Market": "Low"}, "Very Low"),             # 3
+    ({"Location": "Bad", "Market": "Medium"}, "Low"),               # 4
+    ({"Location": "Bad", "Market": "High"}, "Medium"),              # 5
+    ({"Location": "Bad", "Market": "Very High"}, "High"),           # 6
+    ({"Location": "Fair", "Market": "Low"}, "Low"),                 # 7
+    ({"Location": "Fair", "Market": "Medium"}, "Medium"),           # 8
+    ({"Location": "Fair", "Market": "High"}, "High"),               # 9
+    ({"Location": "Fair", "Market": "Very High"}, "Very High"),     # 10
+    ({"Location": "Excellent", "Market": "Low"}, "Medium"),         # 11
+    ({"Location": "Excellent", "Market": "Medium"}, "High"),        # 12
+    ({"Location": "Excellent", "Market": "High"}, "Very High"),     # 13
+    ({"Location": "Excellent", "Market": "Very High"}, "Very High"),# 14
+]
+
+# 2. Applicant Evaluation (12 rules)
+applicant_rules = [
+    ({"Asset": "Low", "Income": "Low"}, "Low"),                     # 1
+    ({"Asset": "Low", "Income": "Medium"}, "Low"),                  # 2
+    ({"Asset": "Low", "Income": "High"}, "Medium"),                 # 3
+    ({"Asset": "Low", "Income": "Very High"}, "High"),              # 4
+    ({"Asset": "Medium", "Income": "Low"}, "Low"),                  # 5
+    ({"Asset": "Medium", "Income": "Medium"}, "Medium"),            # 6
+    ({"Asset": "Medium", "Income": "High"}, "High"),                # 7
+    ({"Asset": "Medium", "Income": "Very High"}, "High"),           # 8
+    ({"Asset": "High", "Income": "Low"}, "Medium"),                 # 9
+    ({"Asset": "High", "Income": "Medium"}, "Medium"),              # 10
+    ({"Asset": "High", "Income": "High"}, "High"),                  # 11
+    ({"Asset": "High", "Income": "Very High"}, "High"),             # 12
+]
+
+# 3. Loan Amount Evaluation (15 rules)
+credit_rules = [
+    ({"Income": "Low", "Interest": "Medium"}, "Very Low"),          # 1
+    ({"Income": "Low", "Interest": "High"}, "Very Low"),            # 2
+    ({"Income": "Medium", "Interest": "High"}, "Low"),              # 3 (PDF'te "2" yazıyor)
+    ({"Applicant": "Low"}, "Very Low"),                             # 4
+    ({"House": "Very Low"}, "Very Low"),                            # 5
+    ({"Applicant": "Medium", "House": "Very Low"}, "Low"),          # 6
+    ({"Applicant": "Medium", "House": "Low"}, "Low"),               # 7
+    ({"Applicant": "Medium", "House": "Medium"}, "Medium"),         # 8
+    ({"Applicant": "Medium", "House": "High"}, "High"),             # 9
+    ({"Applicant": "Medium", "House": "Very High"}, "High"),        # 10
+    ({"Applicant": "High", "House": "Very Low"}, "Low"),            # 11
+    ({"Applicant": "High", "House": "Low"}, "Medium"),              # 12
+    ({"Applicant": "High", "House": "Medium"}, "High"),             # 13
+    ({"Applicant": "High", "House": "High"}, "High"),               # 14
+    ({"Applicant": "High", "House": "Very High"}, "Very High"),     # 15
+]

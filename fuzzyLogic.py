@@ -119,7 +119,9 @@ def membership_over_universe(x_universe, parameters):
 def mamdani(inputs, rules, output_sets, x_universe):
     aggregated = np.zeros(len(x_universe))
 
+    # take each rule
     for conditions, output_name in rules:
+        
         # Step 1: rule strength = min of all condition memberships (AND)
         strength = 1
         for variable, fuzzy_set in conditions.items():

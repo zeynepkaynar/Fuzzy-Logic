@@ -44,13 +44,20 @@ x_credit = np.linspace(0, 500, 1001)
 def fuzzification(input_val, var):
         sonuc = {}
         for name, parameters in var.items():
-            print(name, parameters)
             if len(parameters) == 3:
                 value = trimf(input_val, *parameters)
             else:
                 value = trapmf(input_val, *parameters)
             sonuc[name] = value
         return sonuc
+
+# Fuzzification demo: membership degrees of a sample applicant's inputs
+print("Market value 300k $ :", fuzzification(300, market_value))
+print("Location 7          :", fuzzification(7, house_location))
+print("Asset 400k $        :", fuzzification(400, applicant_asset))
+print("Income 50k $        :", fuzzification(50, applicant_salary))
+print("Interest 5 %        :", fuzzification(5, interest_rate))
+print()
 
 
 # Rule format: ({variable: fuzzy_set, ...}, output_set)
@@ -172,5 +179,22 @@ def evaluate_loan(market, location, asset, income, interest):
 
     return house_score, applicant_score, credit_amount
 
-house, applicant, loan = evaluate_loan(market=300, location=7, asset=400, income=50, interest=5)
-print(f"House: {house:.2f}, Applicant: {applicant:.2f}, Loan: {loan:.1f}k $")
+# test scenerios
+# scenarios = [
+#     ("Ideal applicant",               800, 9, 800, 90, 3),
+#     ("Average applicant",             300, 7, 400, 50, 5),
+#     ("Low income, high interest",     400, 6, 200, 15, 9),
+#     ("Wealthy applicant, poor house", 100, 2, 900, 85, 4),
+#     ("Great house, weak applicant",   900, 9,  50, 20, 5),
+# ]
+
+# print("=" * 75)
+# print(f"{'Scenario':32} | {'House':>6} | {'Applicant':>9} | {'Loan':>12}")
+# print("=" * 75)
+
+# for name, market, location, asset, income, interest in scenarios:
+#     house, applicant, loan = evaluate_loan(market=market, location=location, asset=asset,
+#                                            income=income, interest=interest)
+#     print(f"{name:32} | {house:6.2f} | {applicant:9.2f} | {loan:8.1f}k $")
+
+# print("=" * 75)

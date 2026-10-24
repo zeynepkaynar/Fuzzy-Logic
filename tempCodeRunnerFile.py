@@ -1,0 +1,6 @@
+print("Market value 300k $ :", fuzzification(300, market_value))
+print("Location 7          :", fuzzification(7, house_location))
+print("Asset 400k $        :", fuzzification(400, applicant_asset))
+print("Income 50k $        :", fuzzification(50, applicant_salary))
+print("Interest 5 %        :", fuzzification(5, interest_rate))
+print()
